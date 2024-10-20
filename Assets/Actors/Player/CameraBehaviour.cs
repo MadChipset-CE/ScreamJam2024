@@ -62,6 +62,10 @@ public class CameraBehaviour : MonoBehaviour
 
 
     public Transform getCameraObj() {
+        return cameraObj;
+    }
+
+    public Transform getCameraHolder() {
         return cameraHolderObj;
     }
 

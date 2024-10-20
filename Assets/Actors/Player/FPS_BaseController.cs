@@ -1,12 +1,15 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 [RequireComponent(typeof(PlayerInput), typeof(Rigidbody), typeof(CapsuleCollider))]
 public class FPS_BaseController : MonoBehaviour
 {
     [Header("Character Input Configuration")]
-    [SerializeField] private InputActionReference moveInput;
-    [SerializeField] private InputActionReference lookInput, runInput, jumpInput, actionInput, aimInput;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private InputActionReference moveInput, lookInput, runInput, jumpInput, actionInput, aimInput;
 
     [Header("Character Configuration")]
     [SerializeField] private CameraBehaviour cameraBehaviour;
@@ -19,12 +22,13 @@ public class FPS_BaseController : MonoBehaviour
 
     
     private Rigidbody _rb;
-    private Transform _cam() => cameraBehaviour.getCameraObj();
+    private Transform _cameraTransform() => cameraBehaviour.getCameraObj();
+    private Transform _cameraHolderTransform() => cameraBehaviour.getCameraHolder();
 
 
     private void Awake() {
         Cursor.lockState = CursorLockMode.Locked;
-        verticalLookAngle = _cam().transform.localRotation.x;
+        verticalLookAngle = _cameraHolderTransform().transform.localRotation.x;
         _rb = GetComponent<Rigidbody>();
         cameraBehaviour = GetComponent<CameraBehaviour>();
         groundCheckDistance = (GetComponent<CapsuleCollider>().height / 2) + 0.01f
@@ -38,6 +42,7 @@ public class FPS_BaseController : MonoBehaviour
     private void Update() {       
         Move();
         LookAround();
+        Interact();
     }
 
 
@@ -45,7 +50,7 @@ public class FPS_BaseController : MonoBehaviour
     private Vector2 _lookDirection;
     private void LookAround() {
         transform.Rotate( 0, _lookDirection.x, 0);
-        _cam().transform.localRotation = Quaternion.Euler(verticalLookAngle, 0, 0);
+        _cameraHolderTransform().transform.localRotation = Quaternion.Euler(verticalLookAngle, 0, 0);
 
         _lookDirection = lookInput.action.ReadValue<Vector2>() * mouseSensitivity * Time.deltaTime;
         verticalLookAngle -= _lookDirection.y;
@@ -99,5 +104,18 @@ public class FPS_BaseController : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         CheckGround();
+    }
+
+    private void Interact() {
+        if(Physics.Raycast(sendRaycastFromScreenCenter(), out RaycastHit hit, 1f)) {
+            if(actionInput) {
+                // TODO
+            }
+        }
+    }
+
+    private Ray sendRaycastFromScreenCenter() {
+        Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height/2);
+        return _cameraTransform().GetComponent<Camera>().ScreenPointToRay(screenCenter);
     }
 }
