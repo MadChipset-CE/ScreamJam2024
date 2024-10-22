@@ -1,15 +1,12 @@
-using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting;
+using System.Collections.Generic;
 [RequireComponent(typeof(PlayerInput), typeof(Rigidbody), typeof(CapsuleCollider))]
 public class FPS_BaseController : MonoBehaviour
 {
     [Header("Character Input Configuration")]
     [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private InputActionReference moveInput, lookInput, runInput, jumpInput, actionInput, aimInput;
+    [SerializeField] private InputActionReference moveInput, lookInput, runInput, jumpInput, actionInput, aimInput, inventoryInput;
 
     [Header("Character Configuration")]
     [SerializeField] private CameraBehaviour cameraBehaviour;
@@ -37,6 +34,10 @@ public class FPS_BaseController : MonoBehaviour
         runInput.action.canceled += StopRun;
         jumpInput.action.started += Jump;
         actionInput.action.started += Attack;
+        inventoryInput.action.started += ToggleInventory;
+
+        inventory = GetComponent<Inventory>();
+        inventoryCarroulsel = GetComponent<InventoryCarroulsel>();
     }
 
     private void Update() {       
@@ -96,6 +97,40 @@ public class FPS_BaseController : MonoBehaviour
         
     }
 
+    [SerializeField] private GameObject InventoryUI;
+    private InventoryCarroulsel inventoryCarroulsel;
+    private void ToggleInventory(InputAction.CallbackContext obj) {
+        if(InventoryUI.activeSelf) {
+            Time.timeScale = 1;
+            inventoryCarroulsel.closeInventory();
+            InventoryUI.SetActive(false);
+            toggleInputs(true);
+        } else {
+            Time.timeScale = 0;
+            inventoryCarroulsel.updateItemList();
+            InventoryUI.SetActive(true);
+            toggleInputs(false);
+        }
+    }
+
+    private void toggleInputs(bool active) {
+        if(active) {
+            moveInput.action.Enable();
+            lookInput.action.Enable();
+            runInput.action.Enable();
+            jumpInput.action.Enable();
+            actionInput.action.Enable();
+            aimInput.action.Enable();
+        } else {
+            moveInput.action.Disable();
+            lookInput.action.Disable();
+            runInput.action.Disable();
+            jumpInput.action.Disable();
+            actionInput.action.Disable();
+            aimInput.action.Disable();
+        }
+    }
+
     private bool CheckGround() {
         bool isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
         cameraBehaviour.setGrounded(isGrounded);
@@ -106,10 +141,14 @@ public class FPS_BaseController : MonoBehaviour
         CheckGround();
     }
 
+    Inventory inventory;
+    List<Transform> closestInteractables = new List<Transform>();
     private void Interact() {
         if(Physics.Raycast(sendRaycastFromScreenCenter(), out RaycastHit hit, 1f)) {
-            if(actionInput) {
-                // TODO
+            ItemObject item = hit.transform.GetComponent<ItemObject>();
+            if(actionInput.action.IsPressed() && item != null) {
+                inventory.itemList.Add(item.getItem());
+                Destroy(hit.transform.gameObject);
             }
         }
     }
