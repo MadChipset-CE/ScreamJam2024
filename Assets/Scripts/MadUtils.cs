@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class MadUtils
 {
-    public static bool isBetweenTwoPointsFloat(float value, float pointA, float pointB) { return value > pointA && value < pointB; }
+    public static bool isFloatBetweenTwoPoints(float value, float pointA, float pointB) { return value > pointA && value < pointB; }
 
     public static List<Transform> getVisibleTransforms(Camera pointOfView, List<Transform> candidatedForVisibility, float RangeFromCenterUpToOne) {
         List<Transform> visibleTransforms = new List<Transform>();
@@ -13,8 +13,8 @@ public static class MadUtils
             if(!transformRenderer.isVisible) continue;
 
             Vector3 transformViewportPosition = pointOfView.WorldToViewportPoint(transform.position);
-            bool isVisible =    isBetweenTwoPointsFloat(transformViewportPosition.x, 1 - RangeFromCenterUpToOne, RangeFromCenterUpToOne) &&
-                                isBetweenTwoPointsFloat(transformViewportPosition.y, 1 - RangeFromCenterUpToOne, RangeFromCenterUpToOne) &&
+            bool isVisible =    isFloatBetweenTwoPoints(transformViewportPosition.x, 1 - RangeFromCenterUpToOne, RangeFromCenterUpToOne) &&
+                                isFloatBetweenTwoPoints(transformViewportPosition.y, 1 - RangeFromCenterUpToOne, RangeFromCenterUpToOne) &&
                                 transformViewportPosition.z > 0;
 
             if(!isVisible) continue;
@@ -23,6 +23,15 @@ public static class MadUtils
         }
 
         return visibleTransforms;
+    }
+
+    public static bool is3DPositionInsideAngle(Transform viewerTransform, Vector3 targetedPosition, float maxAngle) {
+        Vector3 directionOfTarget = targetedPosition - viewerTransform.position;
+        directionOfTarget.Normalize();
+
+        float angle = Vector3.Angle(viewerTransform.forward, directionOfTarget);
+
+        return angle <= maxAngle;
     }
 
 }

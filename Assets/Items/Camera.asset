@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Camera
   m_EditorClassIdentifier: 
   description: This camera feels diferent..
-  object3D: {fileID: 1549756828481517685, guid: 64270f20d0647b24991ea70491bd103c, type: 3}
+  object3D: {fileID: 8567377994209966521, guid: be39942ad6c3aa9469ca2e0bc4848de3, type: 3}
   ammoType: 0
