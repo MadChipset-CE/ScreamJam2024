@@ -15,7 +15,7 @@ public class FPS_BaseController : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.1f;
     [SerializeField] private float maxVerticalLookAngle = 60f;
     [SerializeField] private float aimSensitivityMultiplier = 0.75f;
-    [SerializeField] private float mouseSensitivity { get => PlayerPrefs.GetFloat("MouseSensitivity", 90f); set => PlayerPrefs.SetFloat("MouseSensitivity", value); }
+    [SerializeField] private float mouseSensitivity { get => PlayerPrefs.GetFloat("MouseSensitivity", 45f); set => PlayerPrefs.SetFloat("MouseSensitivity", value); }
 
     
     private Rigidbody _rb;

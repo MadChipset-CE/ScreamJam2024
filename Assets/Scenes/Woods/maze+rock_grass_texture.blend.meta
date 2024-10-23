@@ -3,7 +3,12 @@ guid: 884aea087e892e4469c411dfc305c4b9
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Nature wall with gras
+    second: {fileID: 2100000, guid: 5b2fb0dbe149b3944bca9903b8d9d32f, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
